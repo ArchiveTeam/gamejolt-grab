@@ -216,15 +216,13 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         break
       end
       local builds = json["payload"]["builds"]
-      if not builds then
-        abort_item()
-        return {}
-      end
-      for _, data in pairs(builds) do
-        check("https://gamejolt.com/site-api/web/download/info/" .. item_value .. "?build=" .. data["id"])
-        check("https://gamejolt.com/get/build?game=" .. item_value .. "&build=" .. data["id"])
-        check("https://gamejolt.com/site-api/web/discover/games/builds/get-download-url/" .. data["id"], {forceDownload=true})
-        check("https://gamejolt.com/site-api/web/discover/games/builds/get-download-url/" .. data["id"], {})
+      if builds then
+        for _, data in pairs(builds) do
+          check("https://gamejolt.com/site-api/web/download/info/" .. item_value .. "?build=" .. data["id"])
+          check("https://gamejolt.com/get/build?game=" .. item_value .. "&build=" .. data["id"])
+          check("https://gamejolt.com/site-api/web/discover/games/builds/get-download-url/" .. data["id"], {forceDownload=true})
+          check("https://gamejolt.com/site-api/web/discover/games/builds/get-download-url/" .. data["id"], {})
+        end
       end
       check_posts(json["payload"]["posts"])
     end
@@ -370,7 +368,7 @@ end
 
 wget.callbacks.before_exit = function(exit_status, exit_status_string)
   if abortgrab then
-    abort_item()
+    return wget.exits.IO_FAIL
   end
   return exit_status
 end

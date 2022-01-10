@@ -247,11 +247,14 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       end
     end
     if string.match(url, "/site%-api/gameserver/[0-9a-zA-Z]+$") then
-      local token = string.match(url, "([0-9a-zA-Z]+)$")
       local json = JSON:decode(html)
       local newurl = json["payload"]["url"]
       check(newurl)
       check(string.match(newurl, "^(.+/)") .. json["payload"]["build"]["primary_file"]["filename"])
+    end
+    if string.match(url, "/site%-api/web/discover/games/[0-9]+$") then
+      local json = JSON:decode(html)
+      check("https://gamejolt.com/games/" .. json["payload"]["game"]["slug"] .. "/" .. item_value)
     end
     for newurl in string.gmatch(string.gsub(html, "&quot;", '"'), '([^"]+)') do
       checknewurl(newurl)

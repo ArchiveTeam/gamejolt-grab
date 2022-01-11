@@ -302,10 +302,15 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if abortgrab then
     return wget.actions.ABORT
   end
+
+  if string.match(url["url"], "^https?://[^/]*gjcdn%.net/")
+    and (status_code == 403 or status_code == 500) then
+    return wget.actions.EXIT
+  end
   
   if status_code >= 500
-      or (status_code >= 400 and status_code ~= 404)
-      or status_code  == 0 then
+    or (status_code >= 400 and status_code ~= 404)
+    or status_code  == 0 then
     io.stdout:write("Server returned " .. http_stat.statcode .. " (" .. err .. "). Sleeping.\n")
     io.stdout:flush()
     local maxtries = 8
